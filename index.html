@@ -36,6 +36,13 @@ canvas {
   border: 1px solid #ccc;
 }
 
+#button-container {
+  position: absolute;
+  z-index: 3;
+  bottom: 10px;
+  right: 10px;
+}
+
 button {
   font-size: 16px;
   padding: 10px 20px;
@@ -57,9 +64,10 @@ button:hover {
     <div id="canvas-container">
         <video id="video" autoplay playsinline muted></video>
         <canvas id="canvas"></canvas>
+        <div id="button-container">
+            <button id="switch-camera">Switch Camera</button>
+        </div>
     </div>
-    <button id="switch-camera">Switch Camera</button>
     <script src="app.js"></script>
 </body>
 </html>
-
