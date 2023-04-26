@@ -58,7 +58,9 @@ switchCameraButton.addEventListener('click', async () => {
     const nextDevice = videoDevices[nextDeviceIndex];
     await setupCamera(nextDevice.deviceId);
     video.play();
+    detectObjects(); // Restart object detection after switching camera
 });
+
 
 function isPointInRect(x, y, rect) {
     return x >= rect[0] && x <= rect[0] + rect[2] && y >= rect[1] && y <= rect[1] + rect[3];
