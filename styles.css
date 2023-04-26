@@ -33,7 +33,9 @@ button {
   left: 50%;
   transform: translateX(-50%);
   transition: background-color 0.2s;
+  z-index: 3;
 }
+
 
 
 button:hover {
