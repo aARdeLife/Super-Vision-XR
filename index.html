@@ -48,16 +48,18 @@ button {
   transition: background-color 0.2s;
 }
 
-button:hover
-
-
+button:hover {
+  background-color: #0056b3;
+}
     </style>
 </head>
 <body>
     <div id="canvas-container">
-        <video id="video" autoplay></video>
+        <video id="video" autoplay playsinline muted></video>
         <canvas id="canvas"></canvas>
     </div>
+    <button id="switch-camera">Switch Camera</button>
     <script src="app.js"></script>
 </body>
 </html>
+
