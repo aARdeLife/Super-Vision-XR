@@ -129,6 +129,24 @@ predictions.forEach(prediction => {
 
 let currentPredictions = [];
 
+const speakButton = document.getElementById('speak');
+
+function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
+}
+
+speakButton.addEventListener('click', () => {
+    if (currentPredictions.length > 0) {
+        // Speak the class of the first detected object
+        speak(currentPredictions[0].class);
+    } else {
+        // Speak a message if no objects are detected
+        speak('No objects detected');
+    }
+});
+
+
 async function detectObjects() {
 const model = await cocoSsd.load();
 
