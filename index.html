@@ -45,8 +45,6 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  position: absolute;
-  bottom: 10px;
   transition: background-color 0.2s;
   z-index: 3;
 }
@@ -54,10 +52,12 @@ button {
 #switch-camera {
   left: 45%;
   transform: translateX(-50%);
+  bottom: 10px;
 }
 
 #speak {
-  left: 55%;
+  top: 10px;
+  left: 50%;
   transform: translateX(-50%);
 }
 
@@ -74,7 +74,9 @@ button:hover {
     <button id="switch-camera">
         <img src="https://raw.githubusercontent.com/aARdeLife/Super-Vision-XR/05a2b3614fce1e3431355210bcf6a71be40b384b/Asset%204.png" alt="Switch Camera" />
     </button>
-    <button id="speak">Speak Detected Object</button>
+    <button id="speak">
+        <img src="https://github.com/aARdeLife/Super-Vision-XR/raw/a59e2c5c95cbba248ed3f801ccb5dd39b7f12a90/Asset%205.png" alt="Speak Detected Object" />
+    </button>
     <script src="app.js"></script>
 </body>
 </html>
