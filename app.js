@@ -36,18 +36,11 @@ async function setupCamera(deviceId = null) {
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     currentStream = stream;
     video.srcObject = stream;
-    video.onloadedmetadata = () => {
-    const aspectRatio = video.videoWidth / video.videoHeight;
-    const windowAspectRatio = window.innerWidth / window.innerHeight;
-
-    if (aspectRatio > windowAspectRatio) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerWidth / aspectRatio;
-    } else {
-        canvas.width = window.innerHeight * aspectRatio;
-        canvas.height = window.innerHeight;
-    }
+   video.onloadedmetadata = () => {
+    canvas.width = video.clientWidth;
+    canvas.height = video.clientHeight;
 };
+
 
 
     return new Promise((resolve) => {
