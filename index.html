@@ -37,6 +37,16 @@ canvas {
   border: 1px solid #ccc;
 }
 
+.button-container {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
 button {
   font-size: 16px;
   padding: 10px 20px;
@@ -46,24 +56,7 @@ button {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.2s;
-  z-index: 3;
-}
-
-#switch-camera {
-  left: 45%;
-  transform: translateX(-50%);
-  bottom: 10px;
-}
-
-#speak {
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-button img {
-  width: 25%;
-  height: auto;
+  margin: 0 10px;
 }
 
 button:hover {
@@ -76,13 +69,14 @@ button:hover {
         <video id="video" autoplay playsinline muted></video>
         <canvas id="canvas"></canvas>
     </div>
-    <button id="switch-camera">
-        <img src="https://raw.githubusercontent.com/aARdeLife/Super-Vision-XR/05a2b3614fce1e3431355210bcf6a71be40b384b/Asset%204.png" alt="Switch Camera" />
-    </button>
-    <button id="speak">
-        <img src="https://github.com/aARdeLife/Super-Vision-XR/raw/a59e2c5c95cbba248ed3f801ccb5dd39b7f12a90/Asset%205.png" alt="Speak Detected Object" />
-    </button>
+    <div class="button-container">
+        <button id="switch-camera">
+            <img src="https://raw.githubusercontent.com/aARdeLife/Super-Vision-XR/05a2b3614fce1e3431355210bcf6a71be40b384b/Asset%204.png" alt="Switch Camera" />
+        </button>
+        <button id="speak">
+            <img src="https://github.com/aARdeLife/Super-Vision-XR/blob/a59e2c5c95cbba248ed3f801ccb5dd39b7f12a90/Asset%205.png" alt="Speak Detected Object" />
+        </button>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
-
