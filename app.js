@@ -18,101 +18,98 @@ document.body.appendChild(summaryBox);
 let currentStream;
 
 async function setupCamera(deviceId = null) {
-    if (currentStream) {
-        currentStream.getTracks().forEach(track => {
-            track.stop();
-        });
-    }
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
 
-    const constraints = {
-        video: {
-            width: 640,
-            height: 480,
-            deviceId: deviceId ? { exact: deviceId } : undefined
-        },
-        audio: false
-    };
+  const constraints = {
+    video: {
+      width: 640,
+      height: 480,
+      deviceId: deviceId ? { exact: deviceId } : undefined
+    },
+    audio: false
+  };
 
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    currentStream = stream;
-    video.srcObject = stream;
-   video.onloadedmetadata = () => {
+  const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  currentStream = stream;
+  video.srcObject = stream;
+  video.onloadedmetadata = () => {
     canvas.width = video.clientWidth;
     canvas.height = video.clientHeight;
-};
+  };
 
-
-
-    return new Promise((resolve) => {
-        video.onloadeddata = () => {
-            resolve(video);
-        };
-    });
+  return new Promise((resolve) => {
+    video.onloadeddata = () => {
+      resolve(video);
+    };
+  });
 }
 
 switchCameraButton.addEventListener('click', async () => {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter(device => device.kind === 'videoinput');
-    const currentDevice = videoDevices.find(device => device.deviceId === currentStream.getVideoTracks()[0].getSettings().deviceId);
-    const nextDeviceIndex = (videoDevices.indexOf(currentDevice) + 1) % videoDevices.length;
-    const nextDevice = videoDevices[nextDeviceIndex];
-    await setupCamera(nextDevice.deviceId);
-    video.play();
-    detectObjects(); // Restart object detection after switching camera
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const videoDevices = devices.filter(device => device.kind === 'videoinput');
+  const currentDevice = videoDevices.find(device => device.deviceId === currentStream.getVideoTracks()[0].getSettings().deviceId);
+  const nextDeviceIndex = (videoDevices.indexOf(currentDevice) + 1) % videoDevices.length;
+  const nextDevice = videoDevices[nextDeviceIndex];
+  await setupCamera(nextDevice.deviceId);
+  video.play();
+  detectObjects(); // Restart object detection after switching camera
 });
 
-
 function isPointInRect(x, y, rect) {
-    return x >= rect[0] && x <= rect[0] + rect[2] && y >= rect[1] && y <= rect[1] + rect[3];
+  return x >= rect[0] && x <= rect[0] + rect[2] && y >= rect[1] && y <= rect[1] + rect[3];
 }
 
 async function fetchWikipediaSummary(title) {
-    const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
-    if (response.ok) {
-        const data = await response.json();
-        return data.extract;
-    } else {
-        return 'No summary available';
-    }
+  const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
+  if (response.ok) {
+    const data = await response.json();
+    return data.extract;
+  } else {
+    return 'No summary available';
+  }
 }
 
 canvas.addEventListener('click', async event => {
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
 
-    for (const prediction of currentPredictions) {
-        if (isPointInRect(x, y, prediction.bbox)) {
-            const summary = await fetchWikipediaSummary(prediction.class);
-            summaryBox.style.display = 'block';
-            summaryBox.style.left = `${prediction.bbox[0] + prediction.bbox[2]}px`;
-            summaryBox.style.top = `${prediction.bbox[1]}px`;
-            summaryBox.textContent = summary;
-            return;
-        }
+  for (const prediction of currentPredictions) {
+    if (isPointInRect(x, y, prediction.bbox)) {
+      const summary = await fetchWikipediaSummary(prediction.class);
+      summaryBox.style.display = 'block';
+      summaryBox.style.left = `${prediction.bbox[0] + prediction.bbox[2]}px`;
+      summaryBox.style.top = `${prediction.bbox[1]}px`;
+      summaryBox.textContent = summary;
+      return;
     }
+  }
 
-    summaryBox.style.display = 'none';
+  summaryBox.style.display = 'none';
 });
 
 function getColorBySize(bbox) {
-    const area = bbox[2] * bbox[3];
-    const maxArea = canvas.width * canvas.height;
-    const ratio = area / maxArea;
+  const area = bbox[2] * bbox[3];
+  const maxArea = canvas.width * canvas.height;
+  const ratio = area / maxArea;
 
-    const red = 255;
-    const green = Math.floor(255 * ratio);
+  const red = 255;
+const green = Math.floor(255 * ratio);
 const blue = 0;
 
 return `rgb(${red}, ${green}, ${blue})`;
 }
 
 async function drawPredictions(predictions) {
-ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-ctx.font = '16px sans-serif';
-ctx.textBaseline = 'top';
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.font = '16px sans-serif';
+  ctx.textBaseline = 'top';
 
-predictions.forEach(prediction => {
+  predictions.forEach(prediction => {
     const x = prediction.bbox[0];
     const y = prediction.bbox[1];
     const width = prediction.bbox[2];
@@ -124,7 +121,7 @@ predictions.forEach(prediction => {
 
     ctx.fillStyle = getColorBySize(prediction.bbox);
     ctx.fillText(prediction.class, x, y);
-});
+  });
 }
 
 let currentPredictions = [];
@@ -132,36 +129,63 @@ let currentPredictions = [];
 const speakButton = document.getElementById('speak');
 
 function speak(text) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    window.speechSynthesis.speak(utterance);
+  const utterance = new SpeechSynthesisUtterance(text);
+  window.speechSynthesis.speak(utterance);
 }
 
 speakButton.addEventListener('click', () => {
-    if (currentPredictions.length > 0) {
-        // Speak the class of the first detected object
-        speak(currentPredictions[0].class);
-    } else {
-        // Speak a message if no objects are detected
-        speak('No objects detected');
-    }
+  if (currentPredictions.length > 0) {
+    // Speak the class of the first detected object
+    speak(currentPredictions[0].class);
+  } else {
+    // Speak a message if no objects are detected
+    speak('No objects detected');
+  }
 });
 
-
 async function detectObjects() {
-const model = await cocoSsd.load();
+  const model = await cocoSsd.load();
 
-async function detectFrame() {
+  async function detectFrame() {
     currentPredictions = await model.detect(video);
     drawPredictions(currentPredictions);
-    requestAnimationFrame(detectFrame);
-}
 
-detectFrame();
+    // Get the user's location
+    navigator.geolocation.getCurrentPosition(async position => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      // Send the detected objects and location data to the server
+      const detectedObjects = currentPredictions.map(prediction => ({
+        object_name: prediction.class,
+        timestamp: new Date(),
+        location: `POINT(${longitude} ${latitude})`
+      }));
+
+      const response = await fetch('/api/detected-objects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(detectedObjects)
+      });
+
+      if (response.ok) {
+        console.log('Objects and location data sent to the server');
+      } else {
+        console.error('Failed to send objects and location data to the server');
+      }
+    });
+
+    requestAnimationFrame(detectFrame);
+  }
+
+  detectFrame();
 }
 
 (async function() {
-const videoElement = await setupCamera();
-videoElement.play();
-detectObjects();
+  const videoElement = await setupCamera();
+  videoElement.play();
+  detectObjects();
 })();
 
