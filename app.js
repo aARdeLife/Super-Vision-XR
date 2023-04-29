@@ -170,12 +170,34 @@ async function detectObjects() {
         body: JSON.stringify(detectedObjects)
       });
 
-      if (response.ok) {
-        console.log('Objects and location data sent to the server');
-      } else {
-        console.error('Failed to send objects and location data to the server');
-      }
-    });
+      // ...
+const sendDataToServer = async (data) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  };
+
+  const response = await fetch('/data', options);
+
+  if (response.ok) {
+    console.log('Object and location data sent to the server');
+  } else {
+    console.error('Failed to send object and location data to the server');
+  }
+};
+
+// ...
+
+socket.on('update', (objects) => {
+  objects.forEach((object) => {
+    drawObject(object);
+    sendDataToServer(object);
+  });
+});
+
 
     requestAnimationFrame(detectFrame);
   }
