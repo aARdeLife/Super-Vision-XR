@@ -176,15 +176,7 @@ async function detectObjects() {
   } else {
     console.error('Failed to send object and location data to the server');
   }
-}
 
-
-
-      if (response.ok) {
-        console.log('Objects and location data sent to the server');
-      } else {
-        console.error('Failed to send objects and location data to the server');
-      }
     });
 
     requestAnimationFrame(detectFrame);
