@@ -162,21 +162,19 @@ async function detectObjects() {
         location: `POINT(${longitude} ${latitude})`
       }));
 
-      for (const detectedObject of detectedObjects) {
-  const response = await fetch('/api/detected-objects', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(detectedObject)
-  });
+      const response = await fetch('/api/detected-objects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(detectedObjects)
+      });
 
-  if (response.ok) {
-    console.log('Object and location data sent to the server');
-  } else {
-    console.error('Failed to send object and location data to the server');
-  }
-
+      if (response.ok) {
+        console.log('Objects and location data sent to the server');
+      } else {
+        console.error('Failed to send objects and location data to the server');
+      }
     });
 
     requestAnimationFrame(detectFrame);
@@ -190,4 +188,6 @@ async function detectObjects() {
   videoElement.play();
   detectObjects();
 })();
+
+
 
