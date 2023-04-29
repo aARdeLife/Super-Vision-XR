@@ -179,6 +179,7 @@ async function detectObjects() {
 }
 
 
+
       if (response.ok) {
         console.log('Objects and location data sent to the server');
       } else {
