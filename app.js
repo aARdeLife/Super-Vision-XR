@@ -105,7 +105,43 @@ return `rgb(${red}, ${green}, ${blue})`;
 }
 
 async function drawPredictions(predictions) {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  const objectSymbolMapping = {"car": "🚗", "person": "🚶", "tree": "🌳", "dog": "🐕", "cat": "🐈", "bicycle": "🚲", "bus": "🚌", "bird": "🐦"};
+
+
+let symbolGrowthData = {};
+
+function updateSymbolGrowth() {
+    for (let key in symbolGrowthData) {
+        symbolGrowthData[key].growth += 2;
+        
+        // Check if growth reached 100%
+        if (symbolGrowthData[key].growth >= 100) {
+            symbolGrowthData[key].duplicates += 1;
+            symbolGrowthData[key].growth = 0;
+        }
+    }
+}
+
+// Set up an interval to update symbol growth every minute
+setInterval(updateSymbolGrowth, 60000);
+
+
+
+let objectTimers = {};
+
+function updateObjectTimers() {
+    for (let key in objectTimers) {
+        if (objectTimers[key].detected) {
+            objectTimers[key].time += 1;
+        }
+    }
+}
+
+// Set up an interval to update the timers every second
+setInterval(updateObjectTimers, 1000);
+
+
+ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.font = '16px sans-serif';
   ctx.textBaseline = 'top';
 
@@ -121,6 +157,12 @@ async function drawPredictions(predictions) {
 
     ctx.fillStyle = getColorBySize(prediction.bbox);
     ctx.fillText(prediction.class, x, y);
+
+const symbol = objectSymbolMapping[prediction.class];
+if (symbol) {
+    ctx.fillText(symbol, x, y - 20);
+}
+
   });
 }
 
@@ -190,3 +232,81 @@ async function detectObjects() {
 })();
 
 
+
+let selectedObjects = [];
+
+function drawPredictions(predictions) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    predictions.forEach(prediction => {
+        const [x, y, width, height] = prediction.bbox;
+        ctx.strokeStyle = selectedObjects.includes(prediction.class) ? 'red' : 'green';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, width, height);
+        ctx.fillStyle = 'white';
+        ctx.fillText(prediction.class, x, y);
+        const symbol = objectSymbolMapping[prediction.class];
+        if (symbol) {
+            ctx.fillText(symbol, x, y - 20);
+        }
+    });
+}
+
+canvas.addEventListener('click', (event) => {
+    predictions.forEach(prediction => {
+        const [x, y, width, height] = prediction.bbox;
+        if (isPointInRect(event.clientX, event.clientY, prediction.bbox)) {
+            if (selectedObjects.includes(prediction.class)) {
+                const index = selectedObjects.indexOf(prediction.class);
+                selectedObjects.splice(index, 1);
+            } else {
+                selectedObjects.push(prediction.class);
+            }
+            drawPredictions(predictions);
+        }
+    });
+});
+
+const activityMapping = {
+    'person,car': { activity: 'traffic', symbol: '🚦' },
+    'dog,person': { activity: 'dog walking', symbol: '🐕' },
+    'person,bicycle': { activity: 'cycling', symbol: '🚴' },
+    // ... more combinations can be added here
+};
+
+function determineActivity() {
+    const sortedSelectedObjects = selectedObjects.sort().join(',');
+    return activityMapping[sortedSelectedObjects];
+}
+
+canvas.addEventListener('click', (event) => {
+    predictions.forEach(prediction => {
+        const [x, y, width, height] = prediction.bbox;
+        if (isPointInRect(event.clientX, event.clientY, prediction.bbox)) {
+            if (selectedObjects.includes(prediction.class)) {
+                const index = selectedObjects.indexOf(prediction.class);
+                selectedObjects.splice(index, 1);
+            } else {
+                selectedObjects.push(prediction.class);
+            }
+            drawPredictions(predictions);
+
+            // Check for activity after selecting objects
+            const activity = determineActivity();
+            if (activity) {
+                // Calculate center point of all selected objects
+                let totalX = 0, totalY = 0;
+                selectedObjects.forEach(object => {
+                    const objectPrediction = predictions.find(pred => pred.class === object);
+                    totalX += objectPrediction.bbox[0] + objectPrediction.bbox[2] / 2;
+                    totalY += objectPrediction.bbox[1] + objectPrediction.bbox[3] / 2;
+                });
+                const centerX = totalX / selectedObjects.length;
+                const centerY = totalY / selectedObjects.length;
+
+                // Draw the activity symbol at the center
+                ctx.font = "30px Arial";
+                ctx.fillText(activity.symbol, centerX, centerY);
+            }
+        }
+    });
+});
